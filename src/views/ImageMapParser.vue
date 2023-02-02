@@ -24,20 +24,17 @@
             <label>Result</label>
             <a href="#" @click="handleCopyOutput('output-data')">Copy</a>
           </div>
-          <!-- <textarea
-              rows="5"
-              cols="30"
-              readonly
-              v-model="imageMapData"
-            ></textarea> -->
           <div class="result" id="output-data">{{ imageMapData }}</div>
         </div>
         <div class="col-6">
           <div class="preview">
             <label>Preview</label>
-            <!-- <div v-html="imageMapInput"></div> -->
             <div>
-              <img :src="imageMap.imageUrl" usemap="#image-map" />
+              <img
+                :src="imageMap.imageUrl"
+                usemap="#image-map"
+                alt="image map"
+              />
               <map name="image-map">
                 <area
                   v-for="(area, index) in imageMap.areas"
@@ -61,21 +58,35 @@
         <div class="table-responsive">
           <table class="table caption-top">
             <caption>
-              List of areas
+              List of Area
             </caption>
             <thead class="table-light">
-              <th scope="col">#</th>
-              <th scope="col">Shape</th>
-              <th scope="col">Coordinates</th>
-              <th scope="col">Title</th>
-              <th scope="col">Alt</th>
-              <th scope="col">Target</th>
-              <th scope="col">Link</th>
-              <th scope="col">Zone</th>
+              <tr>
+                <td>Package</td>
+                <td colspan="2">
+                  <input
+                    type="text"
+                    class="form-control"
+                    :disabled="!imageMap.areas.length"
+                    @change="handlePackageIdChange"
+                  />
+                </td>
+              </tr>
+              <tr>
+                <th scope="col">#</th>
+                <th scope="col">Shape</th>
+                <th scope="col">Coordinates</th>
+                <th scope="col">Title</th>
+                <th scope="col">Alt</th>
+                <th scope="col">Target</th>
+                <th scope="col">Link</th>
+                <th scope="col">Package</th>
+                <th scope="col">Zone</th>
+              </tr>
             </thead>
             <tbody>
               <tr v-for="(area, index) in imageMap.areas" :key="index">
-                <td scope="row">{{ index + 1 }}</td>
+                <td>{{ index + 1 }}</td>
                 <td>{{ area.shape }}</td>
                 <td>
                   {{ toCoordsValue(area.shape, area) }}
@@ -103,7 +114,14 @@
                   <input type="text" class="form-control" v-model="area.href" />
                 </td>
                 <td>
-                  <input type="text" class="form-control" v-model="area.zone" />
+                  {{ area.packageId }}
+                </td>
+                <td>
+                  <input
+                    type="text"
+                    class="form-control"
+                    v-model="area.zoneId"
+                  />
                 </td>
               </tr>
             </tbody>
@@ -255,6 +273,11 @@ export default {
     handleCopyOutput(elementId) {
       copyToClipboard(elementId);
       alert("Copied");
+    },
+    handlePackageIdChange(e) {
+      for (const area of this.imageMap.areas) {
+        area.packageId = e.target.value;
+      }
     },
   },
 };
