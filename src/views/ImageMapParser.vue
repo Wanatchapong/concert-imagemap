@@ -68,7 +68,7 @@
                     type="text"
                     class="form-control"
                     :disabled="!imageMap.areas.length"
-                    @change="handlePackageIdChange"
+                    @change="handlePackageCodeChange"
                   />
                 </td>
               </tr>
@@ -114,13 +114,13 @@
                   <input type="text" class="form-control" v-model="area.href" />
                 </td>
                 <td>
-                  {{ area.packageId }}
+                  {{ area.packageCode }}
                 </td>
                 <td>
                   <input
                     type="text"
                     class="form-control"
-                    v-model="area.zoneId"
+                    v-model="area.zoneCode"
                   />
                 </td>
               </tr>
@@ -274,9 +274,9 @@ export default {
       copyToClipboard(elementId);
       alert("Copied");
     },
-    handlePackageIdChange(e) {
+    handlePackageCodeChange(e) {
       for (const area of this.imageMap.areas) {
-        area.packageId = e.target.value;
+        area.packageCode = e.target.value;
       }
     },
   },
