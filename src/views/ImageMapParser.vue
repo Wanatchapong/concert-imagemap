@@ -45,7 +45,10 @@
         <div class="col-6">
           <div class="output-header">
             <label>Result</label>
-            <a href="#" @click="handleCopyOutput('output-data')">Copy</a>
+            <a href="#" @click="handleCopyOutput('output-data')">Copy JSON</a>
+            <a href="#" @click="handleCopyJsonString(imageMapData)"
+              >Copy JSON String</a
+            >
           </div>
           <div class="result" id="output-data">{{ imageMapData }}</div>
         </div>
@@ -323,6 +326,19 @@ export default {
       for (const area of this.imageMap.areas) {
         area.zoneGroupId = e.target.value;
       }
+    },
+    handleCopyJsonString(json) {
+      let selBox = document.createElement("textarea");
+      selBox.style.position = "fixed";
+      selBox.style.left = "0";
+      selBox.style.top = "0";
+      selBox.style.opacity = "0";
+      selBox.value = JSON.stringify(json);
+      document.body.appendChild(selBox);
+      selBox.focus();
+      selBox.select();
+      document.execCommand("copy");
+      document.body.removeChild(selBox);
     },
   },
 };
