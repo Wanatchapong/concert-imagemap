@@ -2,18 +2,41 @@
   <div class="container-fluid">
     <div class="row">
       <div class="col">
+        <label>1. Browse Image</label>
+      </div>
+    </div>
+
+    <div class="row mb-3">
+      <div class="col">
+        <input type="file" @change="changeImageFile" />
+      </div>
+    </div>
+
+    <div class="row">
+      <div class="col">
+        <label>2. Enter HTML Map</label>
+      </div>
+    </div>
+
+    <div class="row mb-2">
+      <div class="col">
         <div class="code-input">
-          <label>HTML Input</label>
           <textarea rows="5" cols="30" v-model="imageMapInput"></textarea>
         </div>
       </div>
     </div>
 
-    <div>
-      <button @click="handleProcess(imageMapInput)">Process</button>
+    <div class="mb-2">
+      <button
+        type="button"
+        class="btn btn-primary"
+        @click="handleProcess(imageMapInput)"
+      >
+        3. Click to Process
+      </button>
     </div>
 
-    <div class="code-output">
+    <div class="code-output border mb-3">
       <a href="#" @click="toggleShowOutput">{{
         showOutput ? "Hide Output" : "Show Output"
       }}</a>
@@ -44,7 +67,7 @@
                   :alt="area.alt"
                   :title="area.title"
                   :href="area.href"
-                  :coords="toCoordsValue(area.shape, area)"
+                  :coords="area.coords"
                 />
               </map>
             </div>
@@ -54,6 +77,22 @@
     </div>
 
     <div>
+      <div class="row mb-3">
+        <div class="col-2">4. Enter Zone Group Id</div>
+        <div class="col">
+          <input
+            type="text"
+            class="form-control"
+            :disabled="!imageMap.areas.length"
+            @change="handleZoneGroupIdChange"
+          />
+        </div>
+      </div>
+
+      <div class="row mb-3">
+        <div class="col">5. Enter Each Zone Id as Below</div>
+      </div>
+
       <form novalidate>
         <div class="table-responsive">
           <table class="table caption-top">
@@ -62,17 +101,6 @@
             </caption>
             <thead class="table-light">
               <tr>
-                <td>Package</td>
-                <td colspan="2">
-                  <input
-                    type="text"
-                    class="form-control"
-                    :disabled="!imageMap.areas.length"
-                    @change="handlePackageCodeChange"
-                  />
-                </td>
-              </tr>
-              <tr>
                 <th scope="col">#</th>
                 <th scope="col">Shape</th>
                 <th scope="col">Coordinates</th>
@@ -80,8 +108,8 @@
                 <th scope="col">Alt</th>
                 <th scope="col">Target</th>
                 <th scope="col">Link</th>
-                <th scope="col">Package</th>
-                <th scope="col">Zone</th>
+                <th scope="col">Zone Group Id</th>
+                <th scope="col">Zone Id</th>
               </tr>
             </thead>
             <tbody>
@@ -89,7 +117,8 @@
                 <td>{{ index + 1 }}</td>
                 <td>{{ area.shape }}</td>
                 <td>
-                  {{ toCoordsValue(area.shape, area) }}
+                  <!-- {{ toCoordsValue(area.shape, area) }} -->
+                  {{ area.coords }}
                 </td>
                 <td>
                   <input
@@ -114,7 +143,7 @@
                   <input type="text" class="form-control" v-model="area.href" />
                 </td>
                 <td>
-                  {{ area.packageCode }}
+                  {{ area.zoneGroupId }}
                 </td>
                 <td>
                   <input
@@ -141,11 +170,12 @@ export default {
     return {
       showOutput: false,
       imageMapInput:
-        '<img src="/src/assets/images/851-zone.jpg" usemap="#image-map"><map name="image-map"><area target="" alt="area 1" title="area 1" href="" coords="201,188,298,335" shape="rect"><area target="" alt="area 2" title="area 2" href="" coords="436,183,436,241,474,241,476,252,495,252,495,209" shape="poly"><area target="" alt="area 3" title="area 3" href="" coords="299,496,32" shape="circle"></map>',
+        '<map name="image-map"><area target="" alt="area 1" title="area 1" href="" coords="201,188,298,335" shape="rect"><area target="" alt="area 2" title="area 2" href="" coords="436,183,436,241,474,241,476,252,495,252,495,209" shape="poly"><area target="" alt="area 3" title="area 3" href="" coords="299,496,32" shape="circle"></map>',
       imageMap: {
         imageUrl: "",
         areas: [],
       },
+      imageFile: undefined,
     };
   },
   computed: {
@@ -154,6 +184,19 @@ export default {
     },
   },
   methods: {
+    async convertFileToBase64() {
+      return new Promise((resolve) => {
+        const reader = new FileReader();
+        reader.readAsDataURL(this.imageFile);
+        reader.onload = () => {
+          resolve(reader.result);
+        };
+      });
+    },
+    async changeImageFile(e) {
+      this.imageFile = e.target.files[0];
+      this.imageMap.imageUrl = await this.convertFileToBase64(this.imageFile);
+    },
     resetDefaultImageMap() {
       this.imageMap = {
         imageUrl: "",
@@ -182,41 +225,42 @@ export default {
         alt: elem.getAttribute("alt"),
         title: elem.getAttribute("title"),
         href: elem.getAttribute("href"),
-        coords: [
-          {
-            x,
-            y,
-          },
-          {
-            x: cx,
-            y: cy,
-          },
-        ],
+        coords: elem.getAttribute("coords"),
+        // coords: [
+        //   {
+        //     x,
+        //     y,
+        //   },
+        //   {
+        //     x: cx,
+        //     y: cy,
+        //   },
+        // ],
         width: cx - x,
         height: cy - y,
       };
     },
     areaPolygon(elem) {
-      const coords = elem
-        .getAttribute("coords")
-        .split(",")
-        .reduce((result, coord, index) => {
-          if (index % 2 === 0) {
-            result.push({
-              x: coord,
-            });
-          } else {
-            result[result.length - 1].y = coord;
-          }
-          return result;
-        }, []);
+      // const coords = elem
+      //   .getAttribute("coords")
+      //   .split(",")
+      //   .reduce((result, coord, index) => {
+      //     if (index % 2 === 0) {
+      //       result.push({
+      //         x: coord,
+      //       });
+      //     } else {
+      //       result[result.length - 1].y = coord;
+      //     }
+      //     return result;
+      //   }, []);
       return {
         shape: "poly",
         target: elem.getAttribute("target"),
         alt: elem.getAttribute("alt"),
         title: elem.getAttribute("title"),
         href: elem.getAttribute("href"),
-        coords,
+        coords: elem.getAttribute("coords"),
       };
     },
     areaCircle(elem) {
@@ -227,23 +271,24 @@ export default {
         alt: elem.getAttribute("alt"),
         title: elem.getAttribute("title"),
         href: elem.getAttribute("href"),
-        coords: [
-          {
-            x,
-            y,
-          },
-        ],
+        coords: elem.getAttribute("coords"),
+        // coords: [
+        //   {
+        //     x,
+        //     y,
+        //   },
+        // ],
         radius: r,
       };
     },
-    handleProcess(value) {
+    async handleProcess(value) {
       let imgEl, mapEl;
 
       const html = jquery.parseHTML(value);
       for (const el of html) {
-        if (el.tagName.toLowerCase() === "img") {
+        if (el.tagName && el.tagName.toLowerCase() === "img") {
           imgEl = jquery(el);
-        } else if (el.tagName.toLowerCase() === "map") {
+        } else if (el.tagName && el.tagName.toLowerCase() === "map") {
           mapEl = jquery(el);
         }
       }
@@ -252,12 +297,13 @@ export default {
 
       if (imgEl) {
         this.imageMap.imageUrl = imgEl.attr("src");
+      } else if (this.imageFile) {
+        this.imageMap.imageUrl = await this.convertFileToBase64(this.imageFile);
       }
 
       if (mapEl && mapEl.children().length > 0) {
         for (const area of mapEl.children()) {
           let areaObj = {};
-
           if (area.getAttribute("shape") === "rect") {
             areaObj = this.areaRectangle(area);
           } else if (area.getAttribute("shape") === "poly") {
@@ -265,7 +311,6 @@ export default {
           } else if (area.getAttribute("shape") === "circle") {
             areaObj = this.areaCircle(area);
           }
-
           this.imageMap.areas.push(areaObj);
         }
       }
@@ -274,9 +319,9 @@ export default {
       copyToClipboard(elementId);
       alert("Copied");
     },
-    handlePackageCodeChange(e) {
+    handleZoneGroupIdChange(e) {
       for (const area of this.imageMap.areas) {
-        area.packageCode = e.target.value;
+        area.zoneGroupId = e.target.value;
       }
     },
   },
@@ -310,7 +355,9 @@ label {
 .code-output .result {
   border: 1px solid;
   padding: 2px;
-  /* height: 100%; */
+  max-height: 450px;
+  overflow-wrap: break-word;
+  overflow: auto;
 }
 
 .output-header {
