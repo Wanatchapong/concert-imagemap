@@ -80,20 +80,22 @@
     </div>
 
     <div>
-      <div class="row mb-3">
-        <div class="col-2">4. Enter Zone Group Id</div>
+      <!-- <div class="row mb-3">
+        <div class="col-2">4. Enter Zone Group Code</div>
         <div class="col">
           <input
             type="text"
             class="form-control"
             :disabled="!imageMap.areas.length"
-            @change="handleZoneGroupIdChange"
+            @change="handleZoneGroupCodeChange"
           />
         </div>
-      </div>
+      </div> -->
 
       <div class="row mb-3">
-        <div class="col">5. Enter Each Zone Id as Below</div>
+        <div class="col">
+          5. Enter "Zone-Group Code" and "Zone Code" of each row as below
+        </div>
       </div>
 
       <form novalidate>
@@ -111,8 +113,8 @@
                 <th scope="col">Alt</th>
                 <th scope="col">Target</th>
                 <th scope="col">Link</th>
-                <th scope="col">Zone Group Id</th>
-                <th scope="col">Zone Id</th>
+                <th scope="col">Zone-Group Code</th>
+                <th scope="col">Zone Code</th>
               </tr>
             </thead>
             <tbody>
@@ -146,7 +148,12 @@
                   <input type="text" class="form-control" v-model="area.href" />
                 </td>
                 <td>
-                  {{ area.zoneGroupId }}
+                  <!-- {{ area.zoneGroupCode }} -->
+                  <input
+                    type="text"
+                    class="form-control"
+                    v-model="area.zoneGroupCode"
+                  />
                 </td>
                 <td>
                   <input
@@ -322,9 +329,9 @@ export default {
       copyToClipboard(elementId);
       alert("Copied");
     },
-    handleZoneGroupIdChange(e) {
+    handleZoneGroupCodeChange(e) {
       for (const area of this.imageMap.areas) {
-        area.zoneGroupId = e.target.value;
+        area.zoneGroupCode = e.target.value;
       }
     },
     handleCopyJsonString(json) {
