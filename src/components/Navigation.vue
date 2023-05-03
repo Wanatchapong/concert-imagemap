@@ -6,11 +6,11 @@ import { routePaths } from "../router";
 
 <template>
   <nav>
-    <RouterLink :to="routePaths.Home">Home</RouterLink>
-    <RouterLink :to="routePaths.ImageMapeGenerator"
+    <RouterLink :to="routePaths.Home">Image Map Parser</RouterLink>
+    <!-- <RouterLink :to="routePaths.ImageMapeGenerator"
       >Image Map - Generator</RouterLink
     >
-    <RouterLink :to="routePaths.ImageMapeParser">Image Map - Parser</RouterLink>
+    <RouterLink :to="routePaths.ImageMapeParser">Image Map - Parser</RouterLink> -->
   </nav>
 </template>
 

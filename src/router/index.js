@@ -1,5 +1,5 @@
 import { createRouter, createWebHistory } from "vue-router";
-import ImageMapGenerator from "../views/ImageMapGenerator.vue";
+// import ImageMapGenerator from "../views/ImageMapGenerator.vue";
 import ImageMapParser from "../views/ImageMapParser.vue";
 
 export const routePaths = {
@@ -16,15 +16,15 @@ export const router = createRouter({
       name: "home",
       component: ImageMapParser,
     },
-    {
-      path: routePaths.ImageMapeGenerator,
-      name: "imageMapGenerator",
-      component: ImageMapGenerator,
-    },
-    {
-      path: routePaths.ImageMapeParser,
-      name: "imageMapParser",
-      component: ImageMapParser,
-    },
+    // {
+    //   path: routePaths.ImageMapeGenerator,
+    //   name: "imageMapGenerator",
+    //   component: ImageMapGenerator,
+    // },
+    // {
+    //   path: routePaths.ImageMapeParser,
+    //   name: "imageMapParser",
+    //   component: ImageMapParser,
+    // },
   ],
 });
