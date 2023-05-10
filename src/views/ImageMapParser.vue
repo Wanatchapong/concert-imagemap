@@ -94,7 +94,7 @@
 
       <div class="row mb-3">
         <div class="col">
-          5. Enter "Zone-Group Code" and "Zone Code" of each row as below
+          4. Enter <b>Zone Code</b> each row of table in below
         </div>
       </div>
 
@@ -113,7 +113,7 @@
                 <th scope="col">Alt</th>
                 <th scope="col">Target</th>
                 <th scope="col">Link</th>
-                <th scope="col">Zone-Group Code</th>
+                <!-- <th scope="col">Zone-Group Code</th> -->
                 <th scope="col">Zone Code</th>
               </tr>
             </thead>
@@ -147,14 +147,13 @@
                 <td>
                   <input type="text" class="form-control" v-model="area.href" />
                 </td>
-                <td>
-                  <!-- {{ area.zoneGroupCode }} -->
+                <!-- <td>
                   <input
                     type="text"
                     class="form-control"
                     v-model="area.zoneGroupCode"
                   />
-                </td>
+                </td> -->
                 <td>
                   <input
                     type="text"
